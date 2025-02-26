@@ -15,6 +15,9 @@ export default {
         "text-primary": "#f4f4f5",
         "text-secondary": "#a1a1aa",
         "text-on-tooltip": "#27272a",
+      },
+      fontFamily: {
+        inter: 'Inter, serif'
       }
     },
   },
