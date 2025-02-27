@@ -1,16 +1,40 @@
 import html2canvas from "html2canvas";
-import { Camera } from "phosphor-react";
+import { Camera, Trash } from "phosphor-react";
 import { useState } from "react";
 import { Loading } from "./loading";
 
-export function Screenshot() {
+interface ScreenshotProps {
+  screenshot: string | null
+  onSceenshotTook: (image: string | null) => void
+}
+
+export function Screenshot({ onSceenshotTook, screenshot }: ScreenshotProps) {
   const [isTakingScreenshot, setIsTakingScreenshot] = useState(false)
 
   async function takeScreenshot() {
     setIsTakingScreenshot(true)
     const canvas = await html2canvas(document.querySelector('html') as HTMLElement)
     const base64image = canvas.toDataURL('image/png')
+    onSceenshotTook(base64image)
     setIsTakingScreenshot(false)
+  }
+
+  if (screenshot) {
+    return (
+      <button
+        type="button"
+        className="size-10 p-1 rounded border-transparent flex justify-end items-end text-zinc-400 hover:text-zinc-100 transition-colors"
+        style={{
+          backgroundImage: `url(${screenshot})`,
+          backgroundSize: '118px',
+          backgroundPosition: 'right bottom'
+        }}
+        title="Deletar screenshot"
+        onClick={() => onSceenshotTook(null)}
+      >
+        <Trash weight="fill" />
+      </button>
+    )
   }
 
   return (
