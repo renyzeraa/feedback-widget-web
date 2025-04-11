@@ -13,8 +13,10 @@ export function Screenshot({ onSceenshotTook, screenshot }: ScreenshotProps) {
 
   async function takeScreenshot() {
     setIsTakingScreenshot(true)
+
     const canvas = await html2canvas(document.querySelector('html') as HTMLElement)
     const base64image = canvas.toDataURL('image/png')
+
     onSceenshotTook(base64image)
     setIsTakingScreenshot(false)
   }
