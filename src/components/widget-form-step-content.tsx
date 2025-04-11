@@ -6,26 +6,30 @@ import { useState } from "react";
 
 interface WidgetFormStepContentProps {
   type: FeedbackType
-  setType: (type: null) => void
+  handleRestartFeedback: VoidFunction
+  setFeedbackSent: VoidFunction
 }
 
-export function WidgetFormStepContent({ type, setType }: WidgetFormStepContentProps) {
+export function WidgetFormStepContent({ type, handleRestartFeedback, setFeedbackSent }: WidgetFormStepContentProps) {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [comment, setComment] = useState<string>('')
   const { image, title, placeHolder } = feedbackTypes[type]
 
   function handleSubmitFeedback(event: React.FormEvent) {
     event.preventDefault()
+
     console.log({
       screenshot,
       comment,
     })
+
+    setFeedbackSent()
   }
 
   return (
     <>
       <header className="flex items-center justify-between">
-        <button type="button" onClick={() => setType(null)}>
+        <button type="button" onClick={() => handleRestartFeedback()}>
           <ArrowLeft weight="bold" size={16} className="top-5 left-5 absolute text-zinc-400 hover:text-zinc-100" />
         </button>
         <span className="text-xl leading-6 flex flex-row gap-2 items-center">
