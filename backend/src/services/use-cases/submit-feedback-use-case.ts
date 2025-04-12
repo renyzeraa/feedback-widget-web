@@ -1,6 +1,9 @@
 import { FeedbackRepository } from "@/repositories/feedbacks-repository";
 import { $Enums } from "@prisma/client";
 import { MailAdapter } from "../adapter/mail-adapter";
+import { InvalidFeedbackCommentFormat } from "../errors/invalid-feedback-comment-format copy";
+import { InvalidScreenshotFormat } from "../errors/invalid-screenshot-format copy";
+import { InvalidFeedbackTypeFormat } from "../errors/invalid-feedback-type-format";
 
 interface SubmitFeedbackUseCaseRequest {
   type: $Enums.TipoFeedback
@@ -11,6 +14,17 @@ interface SubmitFeedbackUseCaseRequest {
 export class SubmitFeedbackUseCase {
   constructor(private feedbacksRepository: FeedbackRepository, private mailAdapter: MailAdapter) { }
   async execute({ comment, type, screenshot }: SubmitFeedbackUseCaseRequest) {
+    if (screenshot && !screenshot.startsWith('data:image/png;base64')) {
+      throw new InvalidScreenshotFormat()
+    }
+
+    if (!type || $Enums.TipoFeedback[type] === undefined) {
+      throw new InvalidFeedbackTypeFormat()
+    }
+    if (!comment) {
+      throw new InvalidFeedbackCommentFormat()
+    }
+
     const feedback = await this.feedbacksRepository.create({
       type,
       comment,
