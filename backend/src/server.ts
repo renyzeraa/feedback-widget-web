@@ -1,7 +1,11 @@
-import express from 'express'
+import { app } from './app'
+import { env } from './env'
 
-const app = express()
-
-app.listen(3333, () => {
-  console.log('🟢 HTTP server running > port 3333 🟢')
-})
+app
+  .listen({
+    host: '0.0.0.0',
+    port: env.PORT,
+  })
+  .then(() => {
+    console.log('🚀 HTTP Server 🟢 | PORT => ' + env.PORT)
+  })
