@@ -8,7 +8,7 @@ import { InvalidFeedbackTypeFormat } from "../errors/invalid-feedback-type-forma
 interface SubmitFeedbackUseCaseRequest {
   type: $Enums.TipoFeedback
   comment: string;
-  screenshot?: string;
+  screenshot?: string | null;
 }
 
 export class SubmitFeedbackUseCase {
@@ -28,7 +28,7 @@ export class SubmitFeedbackUseCase {
     const feedback = await this.feedbacksRepository.create({
       type,
       comment,
-      screenshot
+      screenshot: screenshot as string,
     })
 
     await this.mailAdapter.sendMail({

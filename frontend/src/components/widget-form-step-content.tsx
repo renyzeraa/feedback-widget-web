@@ -3,6 +3,8 @@ import { CloseButton } from "./close-button";
 import { FeedbackType, feedbackTypes } from "./widget-form";
 import { Screenshot } from "./screenshot";
 import { useState } from "react";
+import { api } from "../lib/api";
+import { Loading } from "./loading";
 
 interface WidgetFormStepContentProps {
   type: FeedbackType
@@ -13,17 +15,26 @@ interface WidgetFormStepContentProps {
 export function WidgetFormStepContent({ type, handleRestartFeedback, setFeedbackSent }: WidgetFormStepContentProps) {
   const [screenshot, setScreenshot] = useState<string | null>(null)
   const [comment, setComment] = useState<string>('')
+  const [isSendingFeedback, setIsSendingFeedback] = useState<boolean>(false)
   const { image, title, placeHolder } = feedbackTypes[type]
 
-  function handleSubmitFeedback(event: React.FormEvent) {
+  async function handleSubmitFeedback(event: React.FormEvent) {
     event.preventDefault()
+    setIsSendingFeedback(true)
 
-    console.log({
-      screenshot,
+    await api.post('/feedbacks', {
+      type,
       comment,
+      screenshot,
     })
-
-    setFeedbackSent()
+      .then(() => {
+        setFeedbackSent()
+        setIsSendingFeedback(false)
+      })
+      .catch((error) => {
+        console.error(error)
+        setIsSendingFeedback(false)
+      })
   }
 
   return (
@@ -53,9 +64,9 @@ export function WidgetFormStepContent({ type, handleRestartFeedback, setFeedback
             type="submit"
             className="p-2 h-10 bg-brand border-transparent flex-1 rounded flex justify-center items-center text-sm hover:bg-brand-hover transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-zinc-900 focus:ring-brand disabled:opacity-50 disabled:hover:bg-brand disabled:cursor-not-allowed"
             title={comment.length === 0 ? 'Escreva um feedback' : 'Enviar feedback'}
-            disabled={comment.length === 0}
+            disabled={comment.length === 0 || isSendingFeedback}
           >
-            Enviar feedback
+            {isSendingFeedback ? <Loading /> : 'Enviar feedback'}
           </button>
         </footer>
       </form>

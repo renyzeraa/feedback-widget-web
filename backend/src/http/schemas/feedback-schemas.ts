@@ -8,5 +8,5 @@ export const feedbackSchema = z.object({
     invalid_type_error: "Tipo deve ser um dos seguintes: BUG, SUGGESTION, OTHER",
   }),
   comment: z.string().min(1, "Comentário é obrigatório"),
-  screenshot: z.string().base64().optional(),
+  screenshot: z.string().optional().nullable(),
 })
